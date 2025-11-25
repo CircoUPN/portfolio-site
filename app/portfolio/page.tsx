@@ -5,7 +5,24 @@ import Container from '@/components/Container';
 import Section from '@/components/Section';
 import Card from '@/components/Card';
 
-const caseStudies = [
+type FilterType = 'all' | 'revenue' | 'efficiency';
+type BadgeColor = 'blue' | 'violet' | 'green' | 'amber' | 'red';
+
+interface CaseStudy {
+  title: string;
+  slug: string;
+  description: string;
+  metric: string;
+  category: 'revenue' | 'efficiency';
+  label: 'Firefighting' | 'Growth';
+  badgeColor: BadgeColor;
+  date: string;
+  duration: string;
+  role: string;
+  readTime: string;
+}
+
+const caseStudies: CaseStudy[] = [
   {
     title: 'Watch Tower: Revenue Operations Monitoring',
     slug: 'watch-tower',
@@ -39,7 +56,7 @@ const caseStudies = [
     metric: '48% conversion rate',
     category: 'revenue',
     label: 'Growth',
-    badgeColor: 'cyan',
+    badgeColor: 'blue',
     date: '2023-2024',
     duration: '8-10 weeks',
     role: 'Lead architect',
@@ -48,7 +65,7 @@ const caseStudies = [
 ];
 
 export default function PortfolioPage() {
-  const [activeFilter, setActiveFilter] = useState('all');
+  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
 
   const filteredCaseStudies = caseStudies.filter(study => {
     if (activeFilter === 'all') return true;
