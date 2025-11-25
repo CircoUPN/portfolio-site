@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
-// Load Inter font with optimized subsets
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
@@ -22,7 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className={inter.className}>
-        {children}
+        <Header />
+        <main className="pt-16">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );
