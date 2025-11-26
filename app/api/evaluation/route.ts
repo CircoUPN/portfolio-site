@@ -228,18 +228,23 @@ export async function POST(request: Request) {
       created_by: 'system',
     });
 
-    // TODO: Trigger n8n webhook for AI generation and email
-    // This will be added once n8n workflow is set up
-    // await fetch(process.env.N8N_EVALUATION_WEBHOOK!, {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({
-    //     leadId,
-    //     evaluationId: evaluation.id,
-    //     formData: body,
-    //     analysis,
-    //   }),
-    // });
+    // Trigger n8n webhook for AI generation and email
+    try {
+      await fetch(process.env.N8N_EVALUATION_WEBHOOK!, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          leadId,
+          evaluationId: evaluation.id,
+          formData: body,
+          analysis,
+          estimatedValue,
+        }),
+      });
+    } catch (webhookError) {
+      // Log but don't fail - the evaluation is saved, n8n can retry
+      console.error('Failed to trigger n8n webhook:', webhookError);
+    }
 
     return NextResponse.json({
       success: true,
