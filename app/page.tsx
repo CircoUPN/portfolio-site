@@ -47,8 +47,8 @@ export default function Home() {
               <div className="flex items-start gap-3 p-4 rounded-lg bg-slate-800/50 border border-cyan-500/30">
                 <div className="text-2xl pt-0.5">💡</div>
                 <p className="text-base md:text-lg text-cyan-100 leading-relaxed">
-                  <span className="font-semibold">Not sure where to start?</span> I built a 3-minute assessment 
-                  to help you identify your biggest bottleneck and the fastest path to fix it.
+                  <span className="font-semibold">Know what's broken but stuck in execution?</span> Tell me about 
+                  your most painful workflow — I'll send you a personalized 90-day action plan to fix it.
                 </p>
               </div>
 
@@ -59,7 +59,7 @@ export default function Home() {
                   size="large"
                   href="/evaluation"
                 >
-                  Find Your Biggest Bottleneck
+                  Get Your 90-Day Fix-It Plan
                 </Button>
                 <a 
                   href="/contact" 
@@ -366,8 +366,8 @@ export default function Home() {
               Ready to Stop Firefighting and Start Scaling?
             </h2>
             <p className="text-lg md:text-xl text-slate-300 leading-relaxed">
-              Take the 3-minute assessment to discover your biggest infrastructure bottleneck 
-              and get personalized insights on how to fix it.
+              Tell me about the workflow that's driving you crazy. I'll send you a personalized 
+              90-day action plan showing exactly how I'd fix it.
             </p>
             <div className="flex flex-col items-center gap-3 pt-4">
               <Button 
@@ -375,7 +375,7 @@ export default function Home() {
                 size="large"
                 href="/evaluation"
               >
-                Find Your Biggest Bottleneck
+                Get Your 90-Day Fix-It Plan
               </Button>
               <a 
                 href="/contact" 
@@ -385,7 +385,7 @@ export default function Home() {
               </a>
             </div>
             <p className="text-sm text-slate-500 pt-4">
-              Free • 3 minutes • Instant results
+              Free • 15 minutes • Personalized action plan
             </p>
           </div>
         </Container>
