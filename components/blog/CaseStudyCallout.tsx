@@ -1,6 +1,16 @@
 import Link from 'next/link'
 
-type CaseStudySlug = 'watch-tower' | 'sms-agent' | 'attribution-system'
+type CaseStudySlug = 
+  | 'watch-tower' 
+  | 'sms-agent' 
+  | 'attribution-system'
+  | 'linkedin-outbound'
+  | 'sales-forecasting'
+  | 'full-funnel-ads'
+  | 'kpi-command-center'
+  | 'database-validation'
+  | 'lead-lifecycle'
+  | 'gtm-integration'
 
 interface CaseStudyCalloutProps {
   caseStudy: CaseStudySlug
@@ -34,6 +44,55 @@ const CASE_STUDIES: Record<CaseStudySlug, {
     metricLabel: 'MQL→SQL conversion',
     description: 'How I built attribution infrastructure that nearly doubled conversion rates and attributed $2.1M in revenue.',
     href: '/portfolio/attribution-system',
+  },
+  'linkedin-outbound': {
+    title: 'LinkedIn Outbound Engine',
+    metric: '87%',
+    metricLabel: 'faster response time',
+    description: 'How I built a centralized outbound system with SLA monitoring that transformed SDR productivity and pipeline generation.',
+    href: '/portfolio/linkedin-outbound',
+  },
+  'sales-forecasting': {
+    title: 'Sales Forecasting Rebuild',
+    metric: '±9%',
+    metricLabel: 'forecast accuracy',
+    description: 'How I transformed forecasting from ±32% variance to ±9%, enabling a successful Series B raise.',
+    href: '/portfolio/sales-forecasting',
+  },
+  'full-funnel-ads': {
+    title: 'Full-Funnel Ads System',
+    metric: '4.8x',
+    metricLabel: 'ROAS achieved',
+    description: 'How I built an integrated acquisition system that drove $3.8M/month in investment commitments.',
+    href: '/portfolio/full-funnel-ads',
+  },
+  'kpi-command-center': {
+    title: 'KPI Command Center',
+    metric: '91%',
+    metricLabel: 'reporting time saved',
+    description: 'How I built a unified BI platform that eliminated 20+ hours/week of manual reporting.',
+    href: '/portfolio/kpi-command-center',
+  },
+  'database-validation': {
+    title: 'Database Validation & Audit',
+    metric: '91%',
+    metricLabel: 'duplicate reduction',
+    description: 'How I built data quality infrastructure that restored trust in CRM data and eliminated embarrassing outreach mistakes.',
+    href: '/portfolio/database-validation',
+  },
+  'lead-lifecycle': {
+    title: 'Lead Lifecycle Autopilot',
+    metric: '58%',
+    metricLabel: 'faster onboarding',
+    description: 'How I standardized the lead lifecycle and SOPs to dramatically reduce new hire ramp time.',
+    href: '/portfolio/lead-lifecycle',
+  },
+  'gtm-integration': {
+    title: 'GTM Stack Integration',
+    metric: '99%',
+    metricLabel: 'data consistency',
+    description: 'How I unified 5 siloed systems into a single source of truth, ending the weekly data wars.',
+    href: '/portfolio/gtm-integration',
   },
 }
 

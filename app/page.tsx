@@ -1,397 +1,380 @@
-import Image from 'next/image';
+'use client';
+
+import { useState } from 'react';
 import Container from '@/components/Container';
 import Section from '@/components/Section';
-import Button from '@/components/Button';
 import Card from '@/components/Card';
 
-export default function Home() {
+type FilterType = 'all' | 'revenue' | 'efficiency';
+type BadgeColor = 'blue' | 'violet' | 'green' | 'amber' | 'red';
+
+interface CaseStudy {
+  title: string;
+  slug: string;
+  description: string;
+  metric: string;
+  category: 'revenue' | 'efficiency';
+  label: 'Firefighting' | 'Growth';
+  badgeColor: BadgeColor;
+  date: string;
+  duration: string;
+  role: string;
+  readTime: string;
+}
+
+const caseStudies: CaseStudy[] = [
+  // === HERO CASE STUDIES ===
+  {
+    title: 'Watch Tower: Revenue Operations Monitoring',
+    slug: 'watch-tower',
+    description: 'AI/ML technology company. Built comprehensive monitoring system that reduced automation failures by 85% and prevented $50K+ in annual revenue loss.',
+    metric: '85% fewer failures',
+    category: 'efficiency',
+    label: 'Firefighting',
+    badgeColor: 'amber',
+    date: 'Q2 2024',
+    duration: '6 weeks',
+    role: 'Solo implementation',
+    readTime: '15 min read'
+  },
+  {
+    title: 'AI-Powered SMS Leasing Agent',
+    slug: 'sms-agent',
+    description: 'Property operations with 3 properties. Replaced $24K/year VA costs with AI automation, recovering 30-40% of previously lost leads.',
+    metric: '$24K cost eliminated',
+    category: 'efficiency',
+    label: 'Firefighting',
+    badgeColor: 'amber',
+    date: 'Q3 2024',
+    duration: '4 weeks',
+    role: 'Solo own business',
+    readTime: '12 min read'
+  },
+  {
+    title: 'Closed-Loop Attribution System',
+    slug: 'attribution-system',
+    description: 'Mid-market SaaS ($15M-$50M ARR). Nearly doubled MQL→SQL conversion from 25% to 48% and attributed $2.1M in revenue.',
+    metric: '48% conversion rate',
+    category: 'revenue',
+    label: 'Growth',
+    badgeColor: 'blue',
+    date: '2023-2024',
+    duration: '8-10 weeks',
+    role: 'Lead architect',
+    readTime: '18 min read'
+  },
+  // === REVENUE ENGINE CASE STUDIES ===
+  {
+    title: 'LinkedIn Outbound Engine',
+    slug: 'linkedin-outbound',
+    description: 'B2B services firm. Built centralized outbound system with SLA monitoring that improved response times by 87% and increased pipeline by 78%.',
+    metric: '87% faster response',
+    category: 'revenue',
+    label: 'Growth',
+    badgeColor: 'blue',
+    date: 'Q3 2024',
+    duration: '5 weeks',
+    role: 'Solo implementation',
+    readTime: '14 min read'
+  },
+  {
+    title: 'Sales Forecasting Rebuild',
+    slug: 'sales-forecasting',
+    description: 'B2B SaaS ($8M ARR). Transformed forecasting accuracy from ±32% to ±9% variance, enabling successful Series B raise.',
+    metric: '±9% forecast accuracy',
+    category: 'revenue',
+    label: 'Growth',
+    badgeColor: 'blue',
+    date: 'Q1 2024',
+    duration: '6 weeks',
+    role: 'Lead architect',
+    readTime: '15 min read'
+  },
+  {
+    title: 'Full-Funnel Ads System',
+    slug: 'full-funnel-ads',
+    description: 'Real estate investment group. Built integrated acquisition system that achieved 4.8x ROAS and $3.8M/month in investment commitments.',
+    metric: '4.8x ROAS',
+    category: 'revenue',
+    label: 'Growth',
+    badgeColor: 'blue',
+    date: 'Q2-Q3 2024',
+    duration: '8 weeks',
+    role: 'Solo implementation',
+    readTime: '14 min read'
+  },
+  // === OPERATIONAL EFFICIENCY CASE STUDIES ===
+  {
+    title: 'KPI Command Center',
+    slug: 'kpi-command-center',
+    description: 'Multi-division investment group. Built unified BI platform that reduced reporting time by 91% and enabled real-time decision making.',
+    metric: '91% time saved',
+    category: 'efficiency',
+    label: 'Firefighting',
+    badgeColor: 'amber',
+    date: 'Q2 2024',
+    duration: '7 weeks',
+    role: 'Solo implementation',
+    readTime: '14 min read'
+  },
+  {
+    title: 'Database Validation & Audit',
+    slug: 'database-validation',
+    description: 'B2B SaaS ($12M ARR). Built data quality infrastructure that reduced duplicates by 91% and restored trust in CRM data.',
+    metric: '91% duplicate reduction',
+    category: 'efficiency',
+    label: 'Firefighting',
+    badgeColor: 'amber',
+    date: 'Q1 2024',
+    duration: '5 weeks',
+    role: 'Solo implementation',
+    readTime: '13 min read'
+  },
+  {
+    title: 'Lead Lifecycle Autopilot',
+    slug: 'lead-lifecycle',
+    description: 'Scaling SaaS (75→150 employees). Built standardized lifecycle and SOPs that reduced new hire ramp time by 58%.',
+    metric: '58% faster onboarding',
+    category: 'efficiency',
+    label: 'Growth',
+    badgeColor: 'blue',
+    date: 'Q4 2023',
+    duration: '6 weeks',
+    role: 'Lead architect',
+    readTime: '13 min read'
+  },
+  {
+    title: 'GTM Stack Integration',
+    slug: 'gtm-integration',
+    description: 'Mid-market SaaS ($25M ARR). Unified 5 siloed systems into single source of truth, eliminating 32 hours/week of data reconciliation.',
+    metric: '99% data consistency',
+    category: 'efficiency',
+    label: 'Firefighting',
+    badgeColor: 'amber',
+    date: 'Q3 2024',
+    duration: '8 weeks',
+    role: 'Solo implementation',
+    readTime: '15 min read'
+  }
+];
+
+export default function PortfolioPage() {
+  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+
+  const filteredCaseStudies = caseStudies.filter(study => {
+    if (activeFilter === 'all') return true;
+    if (activeFilter === 'revenue') return study.category === 'revenue';
+    if (activeFilter === 'efficiency') return study.category === 'efficiency';
+    return true;
+  });
+
+  // Calculate aggregate stats
+  const totalRevenue = '$2.1M+';
+  const totalCostsSaved = '$98K+';
+  const avgImprovement = '85%';
+  const implementations = '10+';
+
   return (
     <>
-      {/* Hero Section */}
-      <Section className="min-h-screen flex items-center pt-16">
+      <Section className="pt-32 pb-12">
         <Container>
-          <div className="grid lg:grid-cols-5 gap-8 lg:gap-12 items-center">
-            {/* Text Content - 60% */}
-            <div className="lg:col-span-3 space-y-6">
-              {/* Headline */}
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-50 leading-tight">
-                Stop Drowning in{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400">
-                  Execution
-                </span>
-                .
-                <br />
-                Start Focusing on{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">
-                  Growth
-                </span>
-                .
-              </h1>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-50 mb-6">
+            Portfolio
+          </h1>
+          <p className="text-xl text-slate-300 max-w-3xl mb-8">
+            Real case studies with real metrics from 10+ implementations across mid-market SaaS, B2B services, and property operations.
+          </p>
 
-              {/* Subheadline */}
-              <div className="space-y-4 text-lg md:text-xl text-slate-300 leading-relaxed">
-                <p>
-                  Most marketing leaders know what systems they need—but their team is at capacity, 
-                  engineering has a 6-month backlog, and sales, marketing, and operations are running on 
-                  disconnected tools that don't talk to each other.
-                </p>
-                <p>
-                  I got tired of waiting. I learned to architect and build the systems myself—to make my 
-                  team faster, more scalable, and more efficient. Now I design revenue infrastructure that 
-                  adapts to your vision and scales with your growth.{' '}
-                  <span className="text-slate-50 font-semibold">I don't just strategize—I implement.</span>
-                </p>
-              </div>
-
-              {/* CTA Guidance - Prominent Callout */}
-              <div className="flex items-start gap-3 p-4 rounded-lg bg-slate-800/50 border border-cyan-500/30">
-                <div className="text-2xl pt-0.5">💡</div>
-                <p className="text-base md:text-lg text-cyan-100 leading-relaxed">
-                  <span className="font-semibold">Know what's broken but stuck in execution?</span> Tell me about 
-                  your most painful workflow — I'll send you a personalized 90-day action plan to fix it.
-                </p>
-              </div>
-
-              {/* CTAs */}
-              <div className="flex flex-col items-start gap-3 pt-4">
-                <Button 
-                  variant="primary" 
-                  size="large"
-                  href="/evaluation"
-                >
-                  Get Your 90-Day Fix-It Plan
-                </Button>
-                <a 
-                  href="/contact" 
-                  className="text-sm text-slate-400 hover:text-cyan-400 underline transition-colors"
-                >
-                  Or schedule a call
-                </a>
-              </div>
-
-              {/* Quick Stats - Compact for mobile, one row */}
-              <div className="grid grid-cols-3 gap-3 sm:gap-6 pt-6 sm:pt-8 border-t border-slate-700">
-                <div>
-                  <div className="text-xl sm:text-2xl font-bold text-blue-400">85%</div>
-                  <div className="text-xs sm:text-sm text-slate-400">Fewer Failures</div>
-                </div>
-                <div>
-                  <div className="text-xl sm:text-2xl font-bold text-violet-400">$2.1M</div>
-                  <div className="text-xs sm:text-sm text-slate-400">Revenue Attributed</div>
-                </div>
-                <div>
-                  <div className="text-xl sm:text-2xl font-bold text-cyan-400">48%</div>
-                  <div className="text-xs sm:text-sm text-slate-400">Conversion Lift</div>
-                </div>
-              </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 bg-slate-800/50 border border-slate-700 rounded-lg">
+            <div>
+              <p className="text-2xl md:text-3xl font-bold text-cyan-400">{totalRevenue}</p>
+              <p className="text-sm text-slate-400">Revenue Attributed</p>
             </div>
-
-            {/* Professional Photo - 40% (hidden on mobile/tablet, visible on desktop lg+) */}
-            <div className="hidden lg:block lg:col-span-2 relative">
-              <div className="relative aspect-[3/4] lg:aspect-[4/5] rounded-lg overflow-hidden border-2 border-slate-700 shadow-2xl shadow-blue-500/20">
-                <Image
-                  src="/divack-professional.png"
-                  alt="Divack Vega - Revenue Operations Architect"
-                  fill
-                  className="object-cover"
-                  priority
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 40vw"
-                />
-                {/* Subtle gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent" />
-              </div>
+            <div>
+              <p className="text-2xl md:text-3xl font-bold text-emerald-400">{totalCostsSaved}</p>
+              <p className="text-sm text-slate-400">Annual Costs Eliminated</p>
+            </div>
+            <div>
+              <p className="text-2xl md:text-3xl font-bold text-violet-400">{avgImprovement}</p>
+              <p className="text-sm text-slate-400">Average Improvement</p>
+            </div>
+            <div>
+              <p className="text-2xl md:text-3xl font-bold text-blue-400">{implementations}</p>
+              <p className="text-sm text-slate-400">Implementations</p>
             </div>
           </div>
         </Container>
       </Section>
 
-      {/* Pain Profile Section - Firefighting vs Growth */}
-      <Section background="alternate">
+      <Section background="alternate" className="py-12">
         <Container>
-          {/* Section Header */}
-          <div className="text-center mb-12 lg:mb-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-50 mb-4">
-              Which Describes Your Situation?
+          <div className="max-w-4xl mx-auto text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-50 mb-4">
+              My Approach
             </h2>
-            <p className="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto">
-              Whether you're firefighting daily failures or architecting for scale, I've built systems that solve both.
+            <p className="text-slate-300">
+              Every engagement follows the same proven methodology
             </p>
           </div>
 
-          {/* Two Pain Profile Cards */}
-          <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
-            {/* Firefighting Mode Card */}
-            <div className="group relative bg-slate-900 border-2 border-amber-500/30 hover:border-amber-500/60 rounded-lg p-8 transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/20">
-              {/* Icon/Badge */}
-              <div className="flex items-center gap-3 mb-6">
-                <div className="text-4xl">🔥</div>
-                <div>
-                  <h3 className="text-2xl font-bold text-slate-50">Firefighting Mode</h3>
-                  <p className="text-sm text-amber-400 font-semibold">You Need This Fixed Now</p>
-                </div>
-              </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+              <div className="text-3xl mb-4">🎯</div>
+              <h3 className="text-xl font-bold text-slate-50 mb-3">1. Strategy</h3>
+              <p className="text-slate-300 text-sm">
+                Understand business goals, map current state, identify bottlenecks. Define success metrics and ROI targets.
+              </p>
+            </div>
 
-              {/* Pain Points */}
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-start gap-3 text-slate-300">
-                  <span className="text-amber-500 mt-1">•</span>
-                  <span>Leads leaking through the cracks—nobody follows up</span>
-                </li>
-                <li className="flex items-start gap-3 text-slate-300">
-                  <span className="text-amber-500 mt-1">•</span>
-                  <span>Automations failing silently, you find out days later</span>
-                </li>
-                <li className="flex items-start gap-3 text-slate-300">
-                  <span className="text-amber-500 mt-1">•</span>
-                  <span>Manual work drowning your team, can't keep up</span>
-                </li>
-                <li className="flex items-start gap-3 text-slate-300">
-                  <span className="text-amber-500 mt-1">•</span>
-                  <span>Can't scale because nothing is reliable</span>
-                </li>
-                <li className="flex items-start gap-3 text-slate-300">
-                  <span className="text-amber-500 mt-1">•</span>
-                  <span>Hours wasted troubleshooting instead of building</span>
-                </li>
-              </ul>
+            <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+              <div className="text-3xl mb-4">⚙️</div>
+              <h3 className="text-xl font-bold text-slate-50 mb-3">2. Implementation</h3>
+              <p className="text-slate-300 text-sm">
+                Build the system. Write code, architect databases, integrate APIs. Ship working infrastructure in weeks not months.
+              </p>
+            </div>
 
-              {/* CTA */}
-              <Button 
-                variant="secondary" 
-                size="large"
-                href="/portfolio"
-                className="w-full bg-amber-600 hover:bg-amber-700 border-amber-600"
+            <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+              <div className="text-3xl mb-4">📊</div>
+              <h3 className="text-xl font-bold text-slate-50 mb-3">3. Results</h3>
+              <p className="text-slate-300 text-sm">
+                Measure outcomes. Track KPIs, optimize performance, document learnings. Prove ROI with real numbers.
+              </p>
+            </div>
+          </div>
+        </Container>
+      </Section>
+
+      <Section className="py-8">
+        <Container>
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-slate-50 mb-2">Filter by Category</h2>
+            <p className="text-slate-400 text-sm mb-4">
+              Choose what type of work you want to see
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-3 mb-4">
+            <button
+              onClick={() => setActiveFilter('all')}
+              className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+                activeFilter === 'all'
+                  ? 'bg-cyan-500 text-slate-900'
+                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'
+              }`}
+            >
+              All Case Studies
+            </button>
+            <button
+              onClick={() => setActiveFilter('revenue')}
+              className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+                activeFilter === 'revenue'
+                  ? 'bg-cyan-500 text-slate-900'
+                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'
+              }`}
+            >
+              Revenue Engine Building
+            </button>
+            <button
+              onClick={() => setActiveFilter('efficiency')}
+              className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+                activeFilter === 'efficiency'
+                  ? 'bg-cyan-500 text-slate-900'
+                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'
+              }`}
+            >
+              Operational Efficiency
+            </button>
+          </div>
+
+          <div className="flex flex-wrap gap-4 text-sm text-slate-400">
+            <p>
+              Showing {filteredCaseStudies.length} case studies
+            </p>
+            {activeFilter === 'revenue' && (
+              <p className="text-slate-500">
+                • Systems that grow pipeline, prove ROI, and drive measurable revenue
+              </p>
+            )}
+            {activeFilter === 'efficiency' && (
+              <p className="text-slate-500">
+                • Infrastructure that scales, saves time, and prevents revenue leakage
+              </p>
+            )}
+          </div>
+        </Container>
+      </Section>
+
+      <Section background="alternate" className="py-12">
+        <Container>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredCaseStudies.map((study) => (
+              <Card
+                key={study.slug}
+                title={study.title}
+                description={study.description}
+                badge={study.label + ' Mode'}
+                badgeColor={study.badgeColor}
+                href={'/portfolio/' + study.slug}
               >
-                See How I Fix This
-              </Button>
-            </div>
-
-            {/* Growth Mode Card */}
-            <div className="group relative bg-slate-900 border-2 border-cyan-500/30 hover:border-cyan-500/60 rounded-lg p-8 transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-cyan-500/20">
-              {/* Icon/Badge */}
-              <div className="flex items-center gap-3 mb-6">
-                <div className="text-4xl">📈</div>
-                <div>
-                  <h3 className="text-2xl font-bold text-slate-50">Growth Mode</h3>
-                  <p className="text-sm text-cyan-400 font-semibold">You're Building for Scale</p>
+                <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-500">
+                  <span className="px-2 py-1 bg-slate-800 rounded">
+                    {study.date}
+                  </span>
+                  <span className="px-2 py-1 bg-slate-800 rounded">
+                    {study.duration}
+                  </span>
+                  <span className="px-2 py-1 bg-slate-800 rounded">
+                    {study.readTime}
+                  </span>
                 </div>
-              </div>
 
-              {/* Pain Points */}
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-start gap-3 text-slate-300">
-                  <span className="text-cyan-500 mt-1">•</span>
-                  <span>Current ops won't support 2x-5x growth</span>
-                </li>
-                <li className="flex items-start gap-3 text-slate-300">
-                  <span className="text-cyan-500 mt-1">•</span>
-                  <span>Need systems that adapt and scale, not break</span>
-                </li>
-                <li className="flex items-start gap-3 text-slate-300">
-                  <span className="text-cyan-500 mt-1">•</span>
-                  <span>Building foundation for the next stage of growth</span>
-                </li>
-                <li className="flex items-start gap-3 text-slate-300">
-                  <span className="text-cyan-500 mt-1">•</span>
-                  <span>Can't hire your way out of infrastructure problems</span>
-                </li>
-                <li className="flex items-start gap-3 text-slate-300">
-                  <span className="text-cyan-500 mt-1">•</span>
-                  <span>Need architecture and strategy, not quick fixes</span>
-                </li>
-              </ul>
+                <div className="mt-3">
+                  <p className="text-slate-400 text-xs">
+                    My Role: {study.role}
+                  </p>
+                </div>
 
-              {/* CTA */}
-              <Button 
-                variant="primary" 
-                size="large"
-                href="/portfolio"
-                className="w-full"
-              >
-                See How I Build This
-              </Button>
-            </div>
+                <div className="mt-4 pt-4 border-t border-slate-700">
+                  <p className="text-cyan-400 font-bold text-lg">
+                    {study.metric}
+                  </p>
+                </div>
+              </Card>
+            ))}
           </div>
         </Container>
       </Section>
 
-      {/* Portfolio Preview Section */}
-      <Section>
+      <Section className="py-16">
         <Container>
-          {/* Section Header */}
-          <div className="text-center mb-12 lg:mb-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-50 mb-4">
-              See How It Works
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-50 mb-6">
+              Want Similar Results?
             </h2>
-            <p className="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto">
-              Real systems I've built. Real metrics. Real business impact.
+            <p className="text-lg text-slate-300 mb-8">
+              Take the 3-minute assessment to discover your biggest infrastructure bottleneck and get a personalized 90-day action plan.
             </p>
-          </div>
-
-          {/* Case Study Cards Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-12">
-            {/* Watch Tower Case Study */}
-            <Card
-              title="Watch Tower: Revenue Operations Monitoring"
-              description="Comprehensive monitoring system that reduced automation failures by 85% and saved $50K+ in annual revenue leakage. Built automated recovery workflows and real-time alerting across 50+ daily workflows."
-              badge="🔥 Firefighting Mode"
-              badgeColor="amber"
-              href="/portfolio/watch-tower"
-            >
-              <div className="mt-4 pt-4 border-t border-slate-700">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold text-amber-400">85%</span>
-                  <span className="text-slate-400 text-sm">fewer failures</span>
-                </div>
-                <div className="mt-2 text-slate-500 text-sm">
-                  Mean time to detection: Days → Minutes
-                </div>
-              </div>
-            </Card>
-
-            {/* AI SMS Leasing Agent Case Study */}
-            <Card
-              title="AI SMS Leasing Agent: Cost Optimization"
-              description="Intelligent SMS automation handling tenant inquiries, qualification, and tour scheduling 24/7. Eliminated $24K/year in VA costs while recovering 30-40% of leads through instant response times."
-              badge="🔥 Firefighting Mode"
-              badgeColor="amber"
-              href="/portfolio/sms-agent"
-            >
-              <div className="mt-4 pt-4 border-t border-slate-700">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold text-amber-400">$24K</span>
-                  <span className="text-slate-400 text-sm">annual savings</span>
-                </div>
-                <div className="mt-2 text-slate-500 text-sm">
-                  20:1 ROI on technology investment
-                </div>
-              </div>
-            </Card>
-
-            {/* Attribution System Case Study */}
-            <Card
-              title="Closed-Loop Attribution & Pipeline Recovery"
-              description="End-to-end revenue operations infrastructure connecting marketing, sales, and CS. Nearly doubled MQL→SQL conversion, cut sales cycle by 35 days, and attributed $2.1M in first-year revenue."
-              badge="📈 Growth Mode"
-              badgeColor="blue"
-              href="/portfolio/attribution-system"
-            >
-              <div className="mt-4 pt-4 border-t border-slate-700">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold text-cyan-400">48%</span>
-                  <span className="text-slate-400 text-sm">conversion rate</span>
-                </div>
-                <div className="mt-2 text-slate-500 text-sm">
-                  From 25% to 48% MQL→SQL conversion
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          {/* CTA to Full Portfolio */}
-          <div className="text-center">
-            <Button 
-              variant="outline" 
-              size="large"
-              href="/portfolio"
-            >
-              View All Case Studies
-            </Button>
-          </div>
-        </Container>
-      </Section>
-
-      {/* Value Proposition Section - Why I'm Different */}
-      <Section background="alternate">
-        <Container>
-          {/* Section Header */}
-          <div className="text-center mb-12 lg:mb-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-50 mb-4">
-              Why Companies Choose Me
-            </h2>
-            <p className="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto">
-              Most people can do one. Few can do two. I do all three.
-            </p>
-          </div>
-
-          {/* Three Columns */}
-          <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
-            {/* Strategic */}
-            <div className="text-center space-y-4">
-              <div className="text-5xl mb-4">🎯</div>
-              <h3 className="text-2xl font-bold text-slate-50">Strategic</h3>
-              <p className="text-slate-300 leading-relaxed">
-                I understand business outcomes, not just technical specs. I've managed P&L, set marketing budgets, 
-                and made trade-offs between cost, speed, and quality. I know what matters to the business.
-              </p>
-            </div>
-
-            {/* Technical */}
-            <div className="text-center space-y-4">
-              <div className="text-5xl mb-4">⚙️</div>
-              <h3 className="text-2xl font-bold text-slate-50">Technical</h3>
-              <p className="text-slate-300 leading-relaxed">
-                I don't just design systems—I build them. I write code, architect databases, integrate APIs, 
-                and deploy to production. When engineering says "6-month backlog," I ship it in 2 weeks.
-              </p>
-            </div>
-
-            {/* Operational */}
-            <div className="text-center space-y-4">
-              <div className="text-5xl mb-4">🔄</div>
-              <h3 className="text-2xl font-bold text-slate-50">Operational</h3>
-              <p className="text-slate-300 leading-relaxed">
-                I've run revenue operations at scale—50+ automations, multiple CRMs, cross-functional teams. 
-                I know what breaks at 10x scale and how to build systems that won't need rebuilding in 6 months.
-              </p>
-            </div>
-          </div>
-
-          {/* Bottom Statement */}
-          <div className="mt-12 lg:mt-16 text-center">
-            <p className="text-xl md:text-2xl text-slate-300 max-w-4xl mx-auto">
-              This combination is rare. Most consultants strategize but can't implement. 
-              Most engineers implement but don't understand the business. 
-              <span className="text-slate-50 font-semibold"> I bridge both worlds.</span>
-            </p>
-          </div>
-        </Container>
-      </Section>
-
-      {/* Final CTA Section */}
-      <Section>
-        <Container>
-          <div className="max-w-4xl mx-auto text-center space-y-8">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-50">
-              Ready to Stop Firefighting and Start Scaling?
-            </h2>
-            <p className="text-lg md:text-xl text-slate-300 leading-relaxed">
-              Tell me about the workflow that's driving you crazy. I'll send you a personalized 
-              90-day action plan showing exactly how I'd fix it.
-            </p>
-            <div className="flex flex-col items-center gap-3 pt-4">
-              <Button 
-                variant="primary" 
-                size="large"
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <a
                 href="/evaluation"
+                className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 hover:shadow-lg transition-all duration-200 text-lg"
               >
-                Get Your 90-Day Fix-It Plan
-              </Button>
+                Get Your 90-Day Action Plan
+              </a>
               <a 
                 href="/contact" 
-                className="text-sm text-slate-400 hover:text-cyan-400 underline transition-colors"
+                className="text-slate-400 hover:text-cyan-400 transition-colors text-sm underline"
               >
                 Or schedule a direct call
               </a>
             </div>
-            <p className="text-sm text-slate-500 pt-4">
-              Free • 15 minutes • Personalized action plan
+            <p className="text-slate-500 text-sm mt-6">
+              Free • 3 minutes • Instant results
             </p>
           </div>
         </Container>
       </Section>
-
-      {/* More sections will go here in next steps */}
     </>
   );
 }
