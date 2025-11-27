@@ -1,8 +1,6 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import Container from '@/components/Container'
-import Section from '@/components/Section'
 import TableOfContents from '@/components/blog/TableOfContents'
 import CaseStudyCallout from '@/components/blog/CaseStudyCallout'
 import BlogCTA from '@/components/blog/BlogCTA'
@@ -73,9 +71,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   // Get category info
   const categoryInfo = getCategoryInfo(post.category)
 
-  // Extract headings for TOC and add IDs to content
-  const headings = extractHeadings(post.content)
+  // IMPORTANT: Add IDs to headings FIRST, then extract them
   const contentWithIds = addHeadingIds(post.content)
+  const headings = extractHeadings(contentWithIds)
 
   // Get related posts
   const relatedPosts = await getRelatedPosts(slug, post.category, 3)
@@ -93,12 +91,24 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const contentBefore = paragraphs.slice(0, insertPoint).join('</p>') + '</p>'
   const contentAfter = paragraphs.slice(insertPoint).join('</p>')
 
+  // Color classes for category badge
+  const colorClasses: Record<string, string> = {
+    cyan: 'bg-cyan-500/20 text-cyan-400',
+    blue: 'bg-blue-500/20 text-blue-400',
+    violet: 'bg-violet-500/20 text-violet-400',
+    amber: 'bg-amber-500/20 text-amber-400',
+    emerald: 'bg-emerald-500/20 text-emerald-400',
+    rose: 'bg-rose-500/20 text-rose-400',
+    slate: 'bg-slate-500/20 text-slate-400',
+  }
+  const badgeColor = colorClasses[categoryInfo?.color || 'slate']
+
   return (
-    <article>
+    <article className="min-h-screen bg-slate-950">
       {/* Hero Section */}
-      <Section className="pt-24 pb-12">
-        <Container>
-          <div className="max-w-4xl mx-auto">
+      <section className="pt-32 pb-8 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="max-w-4xl">
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm text-slate-500 mb-6">
               <Link href="/blog" className="hover:text-slate-300 transition-colors">
@@ -115,7 +125,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
             {/* Category Badge */}
             <div className="mb-4">
-              <span className={`inline-block px-3 py-1 text-xs font-medium rounded-full bg-${categoryInfo?.color || 'slate'}-500/20 text-${categoryInfo?.color || 'slate'}-400`}>
+              <span className={`inline-block px-3 py-1 text-xs font-medium rounded-full ${badgeColor}`}>
                 {categoryInfo?.label || post.category}
               </span>
             </div>
@@ -126,7 +136,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </h1>
 
             {/* Meta */}
-            <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500 mb-6">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500 mb-4">
               <time dateTime={post.date}>{formattedDate}</time>
               <span>•</span>
               <span>{post.readTime}</span>
@@ -145,154 +155,153 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </div>
 
             {/* Share Buttons */}
-            <ShareButtons title={post.title} slug={slug} />
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-slate-500">Share:</span>
+              <ShareButtons title={post.title} slug={slug} />
+            </div>
           </div>
-        </Container>
-      </Section>
+        </div>
+      </section>
 
       {/* Two-Column Content Section */}
-      <Section className="py-0">
-        <Container>
-          <div className="max-w-6xl mx-auto">
-            <div className="grid lg:grid-cols-[1fr,320px] gap-12">
-              
-              {/* Main Content Column */}
-              <div className="min-w-0">
-                {/* Article Content - First Part */}
-                <div 
-                  className="prose prose-lg prose-invert max-w-none
-                    prose-headings:text-slate-50 prose-headings:font-bold prose-headings:mt-10 prose-headings:mb-4
-                    prose-h2:text-2xl prose-h3:text-xl
-                    prose-p:text-slate-300 prose-p:mb-6
-                    prose-a:text-cyan-400 hover:prose-a:text-cyan-300
-                    prose-strong:text-slate-100
-                    prose-code:text-cyan-400 prose-code:bg-slate-800 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
-                    prose-pre:bg-slate-900 prose-pre:border prose-pre:border-slate-700
-                    prose-ul:text-slate-300 prose-ol:text-slate-300
-                    prose-li:mb-2
-                    prose-blockquote:border-l-cyan-500 prose-blockquote:text-slate-400"
-                  dangerouslySetInnerHTML={{ __html: contentBefore }}
-                />
+      <section className="px-6 pb-16">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-[1fr,320px] gap-12">
+            
+            {/* Main Content Column */}
+            <div className="min-w-0">
+              {/* Article Content - First Part */}
+              <div 
+                className="prose prose-lg prose-invert max-w-none
+                  prose-headings:text-slate-50 prose-headings:font-bold prose-headings:mt-10 prose-headings:mb-4
+                  prose-h2:text-2xl prose-h3:text-xl
+                  prose-p:text-slate-300 prose-p:mb-6
+                  prose-a:text-cyan-400 hover:prose-a:text-cyan-300
+                  prose-strong:text-slate-100
+                  prose-code:text-cyan-400 prose-code:bg-slate-800 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
+                  prose-pre:bg-slate-900 prose-pre:border prose-pre:border-slate-700
+                  prose-ul:text-slate-300 prose-ol:text-slate-300
+                  prose-li:mb-2
+                  prose-blockquote:border-l-cyan-500 prose-blockquote:text-slate-400"
+                dangerouslySetInnerHTML={{ __html: contentBefore }}
+              />
 
-                {/* Case Study Callout - Mid-article */}
-                {post.relatedCaseStudy && (
+              {/* Case Study Callout - Mid-article */}
+              {post.relatedCaseStudy && (
+                <div className="my-10">
                   <CaseStudyCallout caseStudy={post.relatedCaseStudy as 'watch-tower' | 'sms-agent' | 'attribution-system'} />
+                </div>
+              )}
+
+              {/* Article Content - Second Part */}
+              <div 
+                className="prose prose-lg prose-invert max-w-none
+                  prose-headings:text-slate-50 prose-headings:font-bold prose-headings:mt-10 prose-headings:mb-4
+                  prose-h2:text-2xl prose-h3:text-xl
+                  prose-p:text-slate-300 prose-p:mb-6
+                  prose-a:text-cyan-400 hover:prose-a:text-cyan-300
+                  prose-strong:text-slate-100
+                  prose-code:text-cyan-400 prose-code:bg-slate-800 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
+                  prose-pre:bg-slate-900 prose-pre:border prose-pre:border-slate-700
+                  prose-ul:text-slate-300 prose-ol:text-slate-300
+                  prose-li:mb-2
+                  prose-blockquote:border-l-cyan-500 prose-blockquote:text-slate-400"
+                dangerouslySetInnerHTML={{ __html: contentAfter }}
+              />
+
+              {/* Tags */}
+              {post.tags && post.tags.length > 0 && (
+                <div className="mt-12 pt-8 border-t border-slate-800">
+                  <div className="flex flex-wrap gap-2">
+                    {post.tags.map((tag) => (
+                      <span 
+                        key={tag} 
+                        className="px-3 py-1 text-sm bg-slate-800 text-slate-400 rounded-full"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Mobile CTA - Shows on mobile where sidebar is hidden */}
+              <div className="lg:hidden mt-12">
+                <BlogCTA />
+              </div>
+            </div>
+
+            {/* Sticky Sidebar - Desktop Only */}
+            <aside className="hidden lg:block">
+              <div className="sticky top-24 space-y-6">
+                {/* Table of Contents */}
+                {headings.length > 0 && (
+                  <TableOfContents headings={headings} />
                 )}
 
-                {/* Article Content - Second Part */}
-                <div 
-                  className="prose prose-lg prose-invert max-w-none
-                    prose-headings:text-slate-50 prose-headings:font-bold prose-headings:mt-10 prose-headings:mb-4
-                    prose-h2:text-2xl prose-h3:text-xl
-                    prose-p:text-slate-300 prose-p:mb-6
-                    prose-a:text-cyan-400 hover:prose-a:text-cyan-300
-                    prose-strong:text-slate-100
-                    prose-code:text-cyan-400 prose-code:bg-slate-800 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
-                    prose-pre:bg-slate-900 prose-pre:border prose-pre:border-slate-700
-                    prose-ul:text-slate-300 prose-ol:text-slate-300
-                    prose-li:mb-2
-                    prose-blockquote:border-l-cyan-500 prose-blockquote:text-slate-400"
-                  dangerouslySetInnerHTML={{ __html: contentAfter }}
-                />
+                {/* Evaluation CTA */}
+                <BlogCTA variant="compact" />
 
-                {/* Tags */}
-                {post.tags && post.tags.length > 0 && (
-                  <div className="mt-12 pt-8 border-t border-slate-800">
-                    <div className="flex flex-wrap gap-2">
-                      {post.tags.map((tag) => (
-                        <span 
-                          key={tag} 
-                          className="px-3 py-1 text-sm bg-slate-800 text-slate-400 rounded-full"
+                {/* Related Posts in Sidebar */}
+                {relatedPosts.length > 0 && (
+                  <div className="bg-slate-800/50 rounded-xl p-5 border border-slate-700/50">
+                    <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-4">
+                      Related Reading
+                    </h3>
+                    <div className="space-y-4">
+                      {relatedPosts.slice(0, 2).map((relatedPost) => (
+                        <Link 
+                          key={relatedPost.slug}
+                          href={`/blog/${relatedPost.slug}`}
+                          className="block group"
                         >
-                          #{tag}
-                        </span>
+                          <h4 className="text-sm font-medium text-slate-200 group-hover:text-cyan-400 transition-colors line-clamp-2">
+                            {relatedPost.title}
+                          </h4>
+                          <p className="text-xs text-slate-500 mt-1">
+                            {relatedPost.readTime}
+                          </p>
+                        </Link>
                       ))}
                     </div>
                   </div>
                 )}
-
-                {/* Mobile CTA - Shows on mobile where sidebar is hidden */}
-                <div className="lg:hidden mt-12">
-                  <BlogCTA />
-                </div>
               </div>
-
-              {/* Sticky Sidebar - Desktop Only */}
-              <aside className="hidden lg:block">
-                <div className="sticky top-24 space-y-8">
-                  {/* Table of Contents */}
-                  {headings.length > 0 && (
-                    <TableOfContents headings={headings} />
-                  )}
-
-                  {/* Evaluation CTA */}
-                  <BlogCTA variant="compact" />
-
-                  {/* Related Posts in Sidebar */}
-                  {relatedPosts.length > 0 && (
-                    <div className="bg-slate-800/50 rounded-xl p-5 border border-slate-700/50">
-                      <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-4">
-                        Related Reading
-                      </h3>
-                      <div className="space-y-4">
-                        {relatedPosts.slice(0, 2).map((relatedPost) => (
-                          <Link 
-                            key={relatedPost.slug}
-                            href={`/blog/${relatedPost.slug}`}
-                            className="block group"
-                          >
-                            <h4 className="text-sm font-medium text-slate-200 group-hover:text-cyan-400 transition-colors line-clamp-2">
-                              {relatedPost.title}
-                            </h4>
-                            <p className="text-xs text-slate-500 mt-1">
-                              {relatedPost.readTime}
-                            </p>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </aside>
-            </div>
+            </aside>
           </div>
-        </Container>
-      </Section>
+        </div>
+      </section>
 
       {/* Related Posts - Full Section */}
       {relatedPosts.length > 0 && (
-        <Section className="py-16">
-          <Container>
-            <div className="max-w-5xl mx-auto">
-              <h2 className="text-2xl font-bold text-slate-50 mb-8">
-                Related Articles
-              </h2>
-              <div className="grid md:grid-cols-3 gap-6">
-                {relatedPosts.map((relatedPost) => (
-                  <BlogCard key={relatedPost.slug} post={relatedPost} />
-                ))}
-              </div>
+        <section className="px-6 py-16 border-t border-slate-800">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="text-2xl font-bold text-slate-50 mb-8">
+              Related Articles
+            </h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              {relatedPosts.map((relatedPost) => (
+                <BlogCard key={relatedPost.slug} post={relatedPost} />
+              ))}
             </div>
-          </Container>
-        </Section>
+          </div>
+        </section>
       )}
 
       {/* Back to Blog */}
-      <Section className="py-8">
-        <Container>
-          <div className="max-w-5xl mx-auto">
-            <Link 
-              href="/blog"
-              className="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 transition-colors"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              Back to all posts
-            </Link>
-          </div>
-        </Container>
-      </Section>
+      <section className="px-6 py-8">
+        <div className="max-w-5xl mx-auto">
+          <Link 
+            href="/blog"
+            className="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to all posts
+          </Link>
+        </div>
+      </section>
     </article>
   )
 }
