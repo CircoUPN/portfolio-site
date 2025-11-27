@@ -1,64 +1,63 @@
 import Link from 'next/link'
-import { BlogPostPreview, getCategoryInfo } from '@/lib/blog'
+import { getCategoryInfo } from '@/lib/categories'
 
 interface BlogCardProps {
-  post: BlogPostPreview
+  post: {
+    slug: string
+    title: string
+    description: string
+    date: string
+    readTime: string
+    category: string
+    tags?: string[]
+  }
 }
 
 export default function BlogCard({ post }: BlogCardProps) {
-  const category = getCategoryInfo(post.category)
+  const categoryInfo = getCategoryInfo(post.category)
   
-  // Category color mapping
+  // Color mapping for category badges
   const colorClasses: Record<string, string> = {
-    blue: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-    violet: 'bg-violet-500/10 text-violet-400 border-violet-500/20',
-    emerald: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    cyan: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-    amber: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-    pink: 'bg-pink-500/10 text-pink-400 border-pink-500/20',
-    orange: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
+    cyan: 'bg-cyan-500/20 text-cyan-400',
+    blue: 'bg-blue-500/20 text-blue-400',
+    violet: 'bg-violet-500/20 text-violet-400',
+    amber: 'bg-amber-500/20 text-amber-400',
+    emerald: 'bg-emerald-500/20 text-emerald-400',
+    rose: 'bg-rose-500/20 text-rose-400',
+    slate: 'bg-slate-500/20 text-slate-400',
   }
-
-  const categoryColor = category ? colorClasses[category.color] : colorClasses.blue
-
-  // Format date
-  const formattedDate = new Date(post.date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
+  
+  const badgeColor = colorClasses[categoryInfo?.color || 'slate']
 
   return (
-    <Link href={`/blog/${post.slug}`}>
-      <article className="group h-full bg-slate-800/50 border border-slate-700 rounded-xl p-6 hover:border-slate-600 hover:bg-slate-800 transition-all duration-200 hover:-translate-y-1">
-        {/* Category & Read Time */}
-        <div className="flex items-center gap-3 mb-4">
-          <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${categoryColor}`}>
-            {category?.label || post.category}
-          </span>
-          <span className="text-xs text-slate-500">
-            {post.readTime}
+    <Link href={`/blog/${post.slug}`} className="group block">
+      <article className="h-full bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 hover:border-slate-600 hover:bg-slate-800/70 transition-all">
+        {/* Category Badge */}
+        <div className="mb-3">
+          <span className={`px-3 py-1 text-xs font-medium rounded-full ${badgeColor}`}>
+            {categoryInfo?.label || post.category}
           </span>
         </div>
-
+        
         {/* Title */}
-        <h2 className="text-xl font-semibold text-slate-100 mb-3 group-hover:text-cyan-400 transition-colors line-clamp-2">
+        <h3 className="text-lg font-semibold text-slate-50 mb-2 group-hover:text-cyan-400 transition-colors line-clamp-2">
           {post.title}
-        </h2>
-
-        {/* Excerpt */}
-        <p className="text-slate-400 text-sm leading-relaxed mb-4 line-clamp-3">
-          {post.excerpt}
+        </h3>
+        
+        {/* Description */}
+        <p className="text-slate-400 text-sm mb-4 line-clamp-3">
+          {post.description}
         </p>
-
-        {/* Footer */}
-        <div className="flex items-center justify-between pt-4 border-t border-slate-700/50">
-          <time className="text-xs text-slate-500" dateTime={post.date}>
-            {formattedDate}
-          </time>
-          <span className="text-sm text-cyan-400 font-medium group-hover:translate-x-1 transition-transform">
-            Read more →
-          </span>
+        
+        {/* Meta */}
+        <div className="flex items-center gap-3 text-xs text-slate-500">
+          <span>{new Date(post.date).toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric' 
+          })}</span>
+          <span>•</span>
+          <span>{post.readTime}</span>
         </div>
       </article>
     </Link>
