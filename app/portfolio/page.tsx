@@ -4,9 +4,9 @@ import { useState } from 'react';
 import Container from '@/components/Container';
 import Section from '@/components/Section';
 import Card from '@/components/Card';
+import Button from '@/components/Button';
 
 type FilterType = 'all' | 'revenue' | 'efficiency';
-type BadgeColor = 'blue' | 'violet' | 'green' | 'amber' | 'red';
 
 interface CaseStudy {
   title: string;
@@ -15,15 +15,14 @@ interface CaseStudy {
   metric: string;
   category: 'revenue' | 'efficiency';
   label: 'Firefighting' | 'Growth';
-  badgeColor: BadgeColor;
   date: string;
   duration: string;
   role: string;
   readTime: string;
+  featured?: boolean;
 }
 
 const caseStudies: CaseStudy[] = [
-  // === HERO CASE STUDIES ===
   {
     title: 'Watch Tower: Revenue Operations Monitoring',
     slug: 'watch-tower',
@@ -31,11 +30,11 @@ const caseStudies: CaseStudy[] = [
     metric: '85% fewer failures',
     category: 'efficiency',
     label: 'Firefighting',
-    badgeColor: 'amber',
     date: 'Q2 2024',
     duration: '6 weeks',
     role: 'Solo implementation',
-    readTime: '15 min read'
+    readTime: '15 min read',
+    featured: true,
   },
   {
     title: 'AI-Powered SMS Leasing Agent',
@@ -44,11 +43,11 @@ const caseStudies: CaseStudy[] = [
     metric: '$24K cost eliminated',
     category: 'efficiency',
     label: 'Firefighting',
-    badgeColor: 'amber',
     date: 'Q3 2024',
     duration: '4 weeks',
     role: 'Solo own business',
-    readTime: '12 min read'
+    readTime: '12 min read',
+    featured: true,
   },
   {
     title: 'Closed-Loop Attribution System',
@@ -57,13 +56,12 @@ const caseStudies: CaseStudy[] = [
     metric: '48% conversion rate',
     category: 'revenue',
     label: 'Growth',
-    badgeColor: 'blue',
     date: '2023-2024',
     duration: '8-10 weeks',
     role: 'Lead architect',
-    readTime: '18 min read'
+    readTime: '18 min read',
+    featured: true,
   },
-  // === REVENUE ENGINE CASE STUDIES ===
   {
     title: 'LinkedIn Outbound Engine',
     slug: 'linkedin-outbound',
@@ -71,11 +69,10 @@ const caseStudies: CaseStudy[] = [
     metric: '87% faster response',
     category: 'revenue',
     label: 'Growth',
-    badgeColor: 'blue',
     date: 'Q3 2024',
     duration: '5 weeks',
     role: 'Solo implementation',
-    readTime: '14 min read'
+    readTime: '14 min read',
   },
   {
     title: 'Sales Forecasting Rebuild',
@@ -84,11 +81,10 @@ const caseStudies: CaseStudy[] = [
     metric: '±9% forecast accuracy',
     category: 'revenue',
     label: 'Growth',
-    badgeColor: 'blue',
     date: 'Q1 2024',
     duration: '6 weeks',
     role: 'Lead architect',
-    readTime: '15 min read'
+    readTime: '15 min read',
   },
   {
     title: 'Full-Funnel Ads System',
@@ -97,13 +93,11 @@ const caseStudies: CaseStudy[] = [
     metric: '4.8x ROAS',
     category: 'revenue',
     label: 'Growth',
-    badgeColor: 'blue',
     date: 'Q2-Q3 2024',
     duration: '8 weeks',
     role: 'Solo implementation',
-    readTime: '14 min read'
+    readTime: '14 min read',
   },
-  // === OPERATIONAL EFFICIENCY CASE STUDIES ===
   {
     title: 'KPI Command Center',
     slug: 'kpi-command-center',
@@ -111,11 +105,10 @@ const caseStudies: CaseStudy[] = [
     metric: '91% time saved',
     category: 'efficiency',
     label: 'Firefighting',
-    badgeColor: 'amber',
     date: 'Q2 2024',
     duration: '7 weeks',
     role: 'Solo implementation',
-    readTime: '14 min read'
+    readTime: '14 min read',
   },
   {
     title: 'Database Validation & Audit',
@@ -124,11 +117,10 @@ const caseStudies: CaseStudy[] = [
     metric: '91% duplicate reduction',
     category: 'efficiency',
     label: 'Firefighting',
-    badgeColor: 'amber',
     date: 'Q1 2024',
     duration: '5 weeks',
     role: 'Solo implementation',
-    readTime: '13 min read'
+    readTime: '13 min read',
   },
   {
     title: 'Lead Lifecycle Autopilot',
@@ -137,11 +129,10 @@ const caseStudies: CaseStudy[] = [
     metric: '58% faster onboarding',
     category: 'efficiency',
     label: 'Growth',
-    badgeColor: 'blue',
     date: 'Q4 2023',
     duration: '6 weeks',
     role: 'Lead architect',
-    readTime: '13 min read'
+    readTime: '13 min read',
   },
   {
     title: 'GTM Stack Integration',
@@ -150,227 +141,179 @@ const caseStudies: CaseStudy[] = [
     metric: '99% data consistency',
     category: 'efficiency',
     label: 'Firefighting',
-    badgeColor: 'amber',
     date: 'Q3 2024',
     duration: '8 weeks',
     role: 'Solo implementation',
-    readTime: '15 min read'
-  }
+    readTime: '15 min read',
+  },
 ];
+
+const COUNTS = {
+  all: caseStudies.length,
+  revenue: caseStudies.filter((s) => s.category === 'revenue').length,
+  efficiency: caseStudies.filter((s) => s.category === 'efficiency').length,
+};
 
 export default function PortfolioPage() {
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
 
-  const filteredCaseStudies = caseStudies.filter(study => {
-    if (activeFilter === 'all') return true;
-    if (activeFilter === 'revenue') return study.category === 'revenue';
-    if (activeFilter === 'efficiency') return study.category === 'efficiency';
-    return true;
-  });
-
-  // Calculate aggregate stats
-  const totalRevenue = '$2.1M+';
-  const totalCostsSaved = '$98K+';
-  const avgImprovement = '85%';
-  const implementations = '10+';
+  const filteredStudies = caseStudies.filter((s) =>
+    activeFilter === 'all' ? true : s.category === activeFilter
+  );
 
   return (
     <>
+      {/* ── Header + Stats ───────────────────────────────────────────── */}
       <Section className="pt-32 pb-12">
         <Container>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-50 mb-6">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
             Portfolio
           </h1>
-          <p className="text-xl text-slate-300 max-w-3xl mb-8">
-            Real case studies with real metrics from 10+ implementations across mid-market SaaS, B2B services, and property operations.
+          <p className="text-lg text-zinc-500 max-w-2xl mb-12">
+            Real case studies with documented results from 10+ implementations
+            across mid-market SaaS, B2B services, and property operations.
           </p>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 bg-slate-800/50 border border-slate-700 rounded-lg">
-            <div>
-              <p className="text-2xl md:text-3xl font-bold text-cyan-400">{totalRevenue}</p>
-              <p className="text-sm text-slate-400">Revenue Attributed</p>
-            </div>
-            <div>
-              <p className="text-2xl md:text-3xl font-bold text-emerald-400">{totalCostsSaved}</p>
-              <p className="text-sm text-slate-400">Annual Costs Eliminated</p>
-            </div>
-            <div>
-              <p className="text-2xl md:text-3xl font-bold text-violet-400">{avgImprovement}</p>
-              <p className="text-sm text-slate-400">Average Improvement</p>
-            </div>
-            <div>
-              <p className="text-2xl md:text-3xl font-bold text-blue-400">{implementations}</p>
-              <p className="text-sm text-slate-400">Implementations</p>
-            </div>
-          </div>
-        </Container>
-      </Section>
-
-      <Section background="alternate" className="py-12">
-        <Container>
-          <div className="max-w-4xl mx-auto text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-50 mb-4">
-              My Approach
-            </h2>
-            <p className="text-slate-300">
-              Every engagement follows the same proven methodology
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
-              <div className="text-3xl mb-4">🎯</div>
-              <h3 className="text-xl font-bold text-slate-50 mb-3">1. Strategy</h3>
-              <p className="text-slate-300 text-sm">
-                Understand business goals, map current state, identify bottlenecks. Define success metrics and ROI targets.
-              </p>
-            </div>
-
-            <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
-              <div className="text-3xl mb-4">⚙️</div>
-              <h3 className="text-xl font-bold text-slate-50 mb-3">2. Implementation</h3>
-              <p className="text-slate-300 text-sm">
-                Build the system. Write code, architect databases, integrate APIs. Ship working infrastructure in weeks not months.
-              </p>
-            </div>
-
-            <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
-              <div className="text-3xl mb-4">📊</div>
-              <h3 className="text-xl font-bold text-slate-50 mb-3">3. Results</h3>
-              <p className="text-slate-300 text-sm">
-                Measure outcomes. Track KPIs, optimize performance, document learnings. Prove ROI with real numbers.
-              </p>
-            </div>
-          </div>
-        </Container>
-      </Section>
-
-      <Section className="py-8">
-        <Container>
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-slate-50 mb-2">Filter by Category</h2>
-            <p className="text-slate-400 text-sm mb-4">
-              Choose what type of work you want to see
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-3 mb-4">
-            <button
-              onClick={() => setActiveFilter('all')}
-              className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
-                activeFilter === 'all'
-                  ? 'bg-cyan-500 text-slate-900'
-                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              All Case Studies
-            </button>
-            <button
-              onClick={() => setActiveFilter('revenue')}
-              className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
-                activeFilter === 'revenue'
-                  ? 'bg-cyan-500 text-slate-900'
-                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              Revenue Engine Building
-            </button>
-            <button
-              onClick={() => setActiveFilter('efficiency')}
-              className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
-                activeFilter === 'efficiency'
-                  ? 'bg-cyan-500 text-slate-900'
-                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              Operational Efficiency
-            </button>
-          </div>
-
-          <div className="flex flex-wrap gap-4 text-sm text-slate-400">
-            <p>
-              Showing {filteredCaseStudies.length} case studies
-            </p>
-            {activeFilter === 'revenue' && (
-              <p className="text-slate-500">
-                • Systems that grow pipeline, prove ROI, and drive measurable revenue
-              </p>
-            )}
-            {activeFilter === 'efficiency' && (
-              <p className="text-slate-500">
-                • Infrastructure that scales, saves time, and prevents revenue leakage
-              </p>
-            )}
-          </div>
-        </Container>
-      </Section>
-
-      <Section background="alternate" className="py-12">
-        <Container>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredCaseStudies.map((study) => (
-              <Card
-                key={study.slug}
-                title={study.title}
-                description={study.description}
-                badge={study.label + ' Mode'}
-                badgeColor={study.badgeColor}
-                href={'/portfolio/' + study.slug}
-              >
-                <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-500">
-                  <span className="px-2 py-1 bg-slate-800 rounded">
-                    {study.date}
-                  </span>
-                  <span className="px-2 py-1 bg-slate-800 rounded">
-                    {study.duration}
-                  </span>
-                  <span className="px-2 py-1 bg-slate-800 rounded">
-                    {study.readTime}
-                  </span>
+          {/* Open stat row */}
+          <div className="flex flex-wrap gap-x-10 gap-y-6 border-t border-zinc-800 pt-8">
+            {[
+              { value: '$2.1M+', label: 'Revenue Attributed' },
+              { value: '$98K+',  label: 'Annual Costs Eliminated' },
+              { value: '85%',   label: 'Average Improvement' },
+              { value: '10+',   label: 'Implementations' },
+            ].map(({ value, label }, i, arr) => (
+              <div key={label} className="flex items-center gap-10">
+                <div>
+                  {/* Numbers — amber accent */}
+                  <p className="text-2xl md:text-3xl font-bold text-amber-300">{value}</p>
+                  <p className="text-sm text-zinc-600 mt-0.5">{label}</p>
                 </div>
-
-                <div className="mt-3">
-                  <p className="text-slate-400 text-xs">
-                    My Role: {study.role}
-                  </p>
-                </div>
-
-                <div className="mt-4 pt-4 border-t border-slate-700">
-                  <p className="text-cyan-400 font-bold text-lg">
-                    {study.metric}
-                  </p>
-                </div>
-              </Card>
+                {i < arr.length - 1 && (
+                  <div className="hidden md:block w-px h-8 bg-zinc-800" />
+                )}
+              </div>
             ))}
           </div>
         </Container>
       </Section>
 
-      <Section className="py-16">
+      {/* ── Filters + Grid ───────────────────────────────────────────── */}
+      <Section background="alternate" className="py-12 border-t border-zinc-800/60">
         <Container>
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-50 mb-6">
+
+          {/* Filter bar */}
+          <div className="flex flex-wrap gap-3 mb-10">
+            {([
+              { id: 'all',        label: 'All Case Studies' },
+              { id: 'revenue',    label: 'Revenue Engine Building' },
+              { id: 'efficiency', label: 'Operational Efficiency' },
+            ] as { id: FilterType; label: string }[]).map(({ id, label }) => (
+              <button
+                key={id}
+                onClick={() => setActiveFilter(id)}
+                className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
+                  activeFilter === id
+                    ? 'bg-white text-zinc-950 shadow-sm'
+                    : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:border-zinc-600 hover:text-zinc-200'
+                }`}
+              >
+                {label}
+                <span className={`ml-2 text-xs rounded-full px-1.5 py-0.5 ${
+                  activeFilter === id
+                    ? 'bg-zinc-950/20 text-zinc-800'
+                    : 'bg-zinc-800 text-zinc-500'
+                }`}>
+                  {COUNTS[id]}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {/* Case study grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredStudies.map((study) => (
+              <Card
+                key={study.slug}
+                featured={study.featured}
+                title={study.title}
+                description={study.description}
+                badge={study.label === 'Firefighting' ? 'Firefighting Mode' : 'Growth Mode'}
+                href={`/portfolio/${study.slug}`}
+              >
+                <div className="mt-3 flex flex-wrap gap-2 text-xs text-zinc-600">
+                  <span className="px-2 py-1 bg-zinc-950/60 rounded">{study.date}</span>
+                  <span className="px-2 py-1 bg-zinc-950/60 rounded">{study.duration}</span>
+                  <span className="px-2 py-1 bg-zinc-950/60 rounded">{study.readTime}</span>
+                </div>
+                <p className="mt-2 text-zinc-600 text-xs">Role: {study.role}</p>
+                <div className="mt-4 pt-4 border-t border-zinc-800">
+                  {/* Metric — amber accent */}
+                  <p className="text-amber-300 font-bold text-lg">{study.metric}</p>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+        </Container>
+      </Section>
+
+      {/* ── How Every Engagement Works ────────────────────────────────── */}
+      <Section className="py-16 border-t border-zinc-800/60">
+        <Container>
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-12 text-center">
+              How Every Engagement Works
+            </h2>
+            <div className="grid md:grid-cols-3 gap-10">
+              {[
+                {
+                  num: '01',
+                  title: 'Strategy',
+                  body: 'Map current state, identify bottlenecks, define success metrics and ROI targets before touching any tooling.',
+                },
+                {
+                  num: '02',
+                  title: 'Implementation',
+                  body: 'Write code, architect databases, integrate APIs. Ship working infrastructure in weeks, not months.',
+                },
+                {
+                  num: '03',
+                  title: 'Results',
+                  body: 'Track KPIs, optimize performance, document learnings. Every outcome is measured with real numbers.',
+                },
+              ].map(({ num, title, body }) => (
+                <div key={num} className="border-l-2 border-zinc-800 pl-6">
+                  <p className="text-4xl font-bold text-zinc-800 mb-3 leading-none">{num}</p>
+                  <h3 className="text-base font-bold text-white mb-2">{title}</h3>
+                  <p className="text-zinc-500 text-sm leading-relaxed">{body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Container>
+      </Section>
+
+      {/* ── Bottom CTA ───────────────────────────────────────────────── */}
+      <Section background="alternate" className="py-16 border-t border-zinc-800/60">
+        <Container>
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Want Similar Results?
             </h2>
-            <p className="text-lg text-slate-300 mb-8">
-              Take the 3-minute assessment to discover your biggest infrastructure bottleneck and get a personalized 90-day action plan.
+            <p className="text-zinc-500 mb-8 leading-relaxed">
+              Take the 3-minute assessment to find your biggest infrastructure
+              bottleneck and get a personalized 90-day action plan.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <a
-                href="/evaluation"
-                className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 hover:shadow-lg transition-all duration-200 text-lg"
-              >
+              <Button href="/evaluation" variant="primary" size="large">
                 Get Your 90-Day Action Plan
-              </a>
-              <a 
-                href="/contact" 
-                className="text-slate-400 hover:text-cyan-400 transition-colors text-sm underline"
-              >
-                Or schedule a direct call
+              </Button>
+              <a href="/contact" className="text-zinc-600 hover:text-zinc-300 transition-colors text-sm">
+                Or schedule a direct call →
               </a>
             </div>
-            <p className="text-slate-500 text-sm mt-6">
-              Free • 3 minutes • Instant results
+            <p className="text-zinc-800 text-xs mt-6 tracking-wide uppercase">
+              Free · 3 minutes · Instant results
             </p>
           </div>
         </Container>

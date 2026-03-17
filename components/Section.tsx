@@ -6,13 +6,15 @@ interface SectionProps {
   background?: 'default' | 'alternate';
 }
 
-export default function Section({ 
-  children, 
+export default function Section({
+  children,
   className = '',
-  background = 'default' 
+  background = 'default',
 }: SectionProps) {
-  const bgColor = background === 'alternate' ? 'bg-slate-800' : 'bg-slate-900';
-  
+  // default  → zinc-950 (near-black, blends with gradient body)
+  // alternate → zinc-900 (one step lighter, creates clear separation)
+  const bgColor = background === 'alternate' ? 'bg-zinc-900' : 'bg-zinc-950';
+
   return (
     <section className={`py-12 sm:py-16 md:py-20 lg:py-24 ${bgColor} ${className}`}>
       {children}

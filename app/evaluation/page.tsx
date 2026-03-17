@@ -9,22 +9,25 @@ export const metadata = {
 
 export default function EvaluationPage() {
   return (
-    <Section className="min-h-screen pt-24 pb-16">
+    <Section className="min-h-screen pt-32 pb-16">
       <Container>
         {/* Page Header */}
         <div className="max-w-3xl mx-auto text-center mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-50 mb-4">
+          <p className="text-xs font-semibold tracking-widest uppercase text-amber-400/70 mb-4">
+            Free Assessment
+          </p>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Get Your Personalized Action Plan
           </h1>
-          <p className="text-lg text-slate-400">
-            Tell me about the workflow that is driving you crazy. I will send you a detailed 
-            90-day plan showing exactly how I would fix it - specific steps, tools, and expected outcomes.
+          <p className="text-lg text-zinc-500">
+            Tell me about the workflow that is driving you crazy. I will send you a detailed
+            90-day plan showing exactly how I would fix it — specific steps, tools, and expected outcomes.
           </p>
-          <div className="flex items-center justify-center gap-4 mt-4 text-sm text-slate-500">
+          <div className="flex items-center justify-center gap-3 mt-5 text-sm text-zinc-600">
             <span>~15 minutes</span>
-            <span>-</span>
+            <span className="w-px h-4 bg-zinc-800" />
             <span>Plan delivered via email</span>
-            <span>-</span>
+            <span className="w-px h-4 bg-zinc-800" />
             <span>Your data stays private</span>
           </div>
         </div>

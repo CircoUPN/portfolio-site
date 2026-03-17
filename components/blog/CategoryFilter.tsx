@@ -9,46 +9,45 @@ interface CategoryFilterProps {
 }
 
 export default function CategoryFilter({ activeCategory, postCounts }: CategoryFilterProps) {
-  // Calculate total posts
   const totalPosts = Object.values(postCounts).reduce((a, b) => a + b, 0)
 
   return (
     <div className="flex flex-wrap gap-2">
-      {/* All Posts Button */}
       <Link
         href="/blog"
-        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
           !activeCategory
-            ? 'bg-cyan-500 text-slate-950'
-            : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-slate-100'
+            ? 'bg-white text-zinc-950 shadow-sm'
+            : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:border-zinc-600 hover:text-zinc-200'
         }`}
       >
         All
-        <span className={`ml-2 ${!activeCategory ? 'text-slate-950/70' : 'text-slate-500'}`}>
+        <span className={`ml-2 text-xs rounded-full px-1.5 py-0.5 ${
+          !activeCategory ? 'bg-zinc-950/20 text-zinc-800' : 'bg-zinc-800 text-zinc-500'
+        }`}>
           {totalPosts}
         </span>
       </Link>
 
-      {/* Category Buttons */}
       {CATEGORIES.map(category => {
         const count = postCounts[category.slug] || 0
         const isActive = activeCategory === category.slug
-
-        // Only show categories with posts
         if (count === 0) return null
 
         return (
           <Link
             key={category.slug}
             href={`/blog?category=${category.slug}`}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
               isActive
-                ? 'bg-cyan-500 text-slate-950'
-                : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-slate-100'
+                ? 'bg-white text-zinc-950 shadow-sm'
+                : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:border-zinc-600 hover:text-zinc-200'
             }`}
           >
             {category.label}
-            <span className={`ml-2 ${isActive ? 'text-slate-950/70' : 'text-slate-500'}`}>
+            <span className={`ml-2 text-xs rounded-full px-1.5 py-0.5 ${
+              isActive ? 'bg-zinc-950/20 text-zinc-800' : 'bg-zinc-800 text-zinc-500'
+            }`}>
               {count}
             </span>
           </Link>

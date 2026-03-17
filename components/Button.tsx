@@ -20,26 +20,29 @@ export default function Button({
   className = '',
   type = 'button',
 }: ButtonProps) {
-  // Base styles for all buttons
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900';
+  const baseStyles =
+    'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-zinc-950';
 
-  // Variant styles
   const variantStyles = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40',
-    secondary: 'bg-violet-600 text-white hover:bg-violet-700 focus:ring-violet-500 shadow-lg shadow-violet-500/20 hover:shadow-violet-500/40',
-    outline: 'border-2 border-slate-600 text-slate-200 hover:border-blue-500 hover:text-blue-400 focus:ring-blue-500',
+    // White bg / black text — high contrast, editorial
+    primary:
+      'bg-white text-zinc-950 hover:bg-zinc-100 focus:ring-white shadow-lg shadow-white/10 hover:shadow-white/20',
+    // Slightly off-white for secondary actions
+    secondary:
+      'bg-zinc-100 text-zinc-900 hover:bg-white focus:ring-zinc-300 shadow-lg shadow-white/5',
+    // Subtle border, low-key — steps up on hover
+    outline:
+      'border border-zinc-700 text-zinc-300 hover:border-zinc-400 hover:text-white focus:ring-zinc-500',
   };
 
-  // Size styles
   const sizeStyles = {
-    small: 'px-4 py-2 text-sm',
+    small:  'px-4 py-2 text-sm',
     medium: 'px-6 py-3 text-base',
-    large: 'px-8 py-4 text-lg',
+    large:  'px-8 py-4 text-lg',
   };
 
   const buttonClasses = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`;
 
-  // If href is provided, render as Link
   if (href) {
     return (
       <Link href={href} className={buttonClasses}>
@@ -48,7 +51,6 @@ export default function Button({
     );
   }
 
-  // Otherwise render as button
   return (
     <button type={type} onClick={onClick} className={buttonClasses}>
       {children}

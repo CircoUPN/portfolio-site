@@ -4,20 +4,29 @@
 
 @layer base {
   :root {
-    --background: 15 23 42; /* slate-900 */
-    --foreground: 248 250 252; /* slate-50 */
+    --background: 9 9 11;      /* zinc-950 */
+    --foreground: 244 244 245; /* zinc-100 */
+  }
+
+  html {
+    /* Subtle fixed gradient: pure black → near-black → dark grey */
+    background: linear-gradient(160deg, #000000 0%, #09090b 45%, #18181b 100%);
+    background-attachment: fixed;
+    min-height: 100%;
   }
 
   body {
-    background-color: rgb(15 23 42);
-    color: rgb(248 250 252);
+    background-color: transparent;
+    color: rgb(244 244 245);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     letter-spacing: -0.025em;
+    color: #ffffff;
   }
 }
